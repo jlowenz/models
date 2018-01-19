@@ -50,7 +50,7 @@ _NUM_IMAGES = {
 ################################################################################
 def record_dataset(filenames):
   """Returns an input pipeline Dataset from `filenames`."""
-  record_bytes = _HEIGHT * _WIDTH * _DEPTH + 1
+  record_bytes = _HEIGHT * _WIDTH * _NUM_CHANNELS + 1
   return tf.data.FixedLengthRecordDataset(filenames, record_bytes)
 
 
