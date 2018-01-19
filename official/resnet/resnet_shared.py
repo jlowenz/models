@@ -97,7 +97,7 @@ def resnet_model_fn(features, labels, mode, params, model_class):
       eval_metric_ops=metrics)
 
 
-class resnet_main(flags, model_function, input_function):
+def resnet_main(flags, model_function, input_function):
     # Using the Winograd non-fused algorithms provides a small performance boost.
   os.environ['TF_ENABLE_WINOGRAD_NONFUSED'] = '1'
 
