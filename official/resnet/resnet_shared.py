@@ -72,7 +72,7 @@ def resnet_model_fn(features, labels, mode, params, model_class):
 
     optimizer = tf.train.MomentumOptimizer(
         learning_rate=learning_rate,
-        momentum=_MOMENTUM)
+        momentum=params['momentum'])
 
     # Batch norm requires update ops to be added as a dependency to the train_op
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)

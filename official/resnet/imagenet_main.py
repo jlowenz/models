@@ -188,7 +188,8 @@ def imagenet_model_fn(features, labels, mode, params):
       epochs=[30, 60, 80, 90],
       learning_rates=[1, 0.1, 0.01, 1e-3, 1e-4],
       weight_decay=_WEIGHT_DECAY,
-      train_images=_NUM_IMAGES['train'])
+      train_images=_NUM_IMAGES['train'],
+      momentum=_MOMENTUM)
 
   params.update(train_params)
 
