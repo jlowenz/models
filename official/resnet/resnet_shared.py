@@ -31,7 +31,7 @@ def resnet_model_fn(features, labels, mode, params, model_class):
   tf.summary.image('images', features, max_outputs=6)
 
   model = model_class(params['batch_size'], params['data_format'])
-  logits = model(inputs, mode == tf.estimator.ModeKeys.TRAIN)
+  logits = model(features, mode == tf.estimator.ModeKeys.TRAIN)
 
   predictions = {
       'classes': tf.argmax(logits, axis=1),
