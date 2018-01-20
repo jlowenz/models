@@ -57,7 +57,7 @@ def resnet_model_fn(features, labels, mode, params, model_class):
     # Scale the learning rate linearly with the batch size. When the batch size
     # is 128, the learning rate should be 0.1.
     initial_learning_rate = 0.1 * params['batch_size'] / params['batch_denom']
-    batches_per_epoch = _NUM_IMAGES['train'] / params['batch_size']
+    batches_per_epoch = params['train_images'] / params['batch_size']
     global_step = tf.train.get_or_create_global_step()
 
     # Multiply the learning rate by 0.1 at 100, 150, and 200 epochs.
