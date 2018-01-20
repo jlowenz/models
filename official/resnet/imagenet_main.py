@@ -171,7 +171,7 @@ class ImagenetModel(Model):
         'Size received: {} .'.format(self.resnet_size)
         'Sizes allowed: {}'.format(choices.keys()))
 
-  def _get_stride_sizes():
+  def _get_stride_sizes(self):
     return [2, 2, 1, 2, 2, 2]
 
   def _get_final_size(self):
