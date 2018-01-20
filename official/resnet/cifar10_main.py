@@ -89,7 +89,7 @@ def parse_record(raw_record):
   # The remaining bytes after the label represent the image, which we reshape
   # from [depth * height * width] to [depth, height, width].
   depth_major = tf.reshape(record_vector[label_bytes:record_bytes],
-                           [_NUM_CLASSES, _HEIGHT, _WIDTH])
+                           [_NUM_CHANNELS, _HEIGHT, _WIDTH])
 
   # Convert from [depth, height, width] to [height, width, depth], and cast as
   # float32.
