@@ -232,9 +232,6 @@ class Model(object):
       data_format: Input format ('channels_last', 'channels_first', or None).
         If set to None, the format is dependent on whether a GPU is available.
     """
-    if resnet_size % 6 != 2:
-      raise ValueError('resnet_size must be 6n + 2:', resnet_size)
-
     self.resnet_size = resnet_size
 
     if not data_format:
