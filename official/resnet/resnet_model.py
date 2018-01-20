@@ -264,6 +264,9 @@ class Model(object):
     """
     p = self.params
 
+    # Reshape to match CPU/GPU channel preference
+    inputs = tf.reshape(inputs, self._input_shape)
+
     # Get a stack of strides we can pop as we go.
     stride_stack = p['stride_sizes'][::-1]
 
