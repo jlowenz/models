@@ -38,14 +38,14 @@ _BATCH_NORM_DECAY = 0.997
 _BATCH_NORM_EPSILON = 1e-5
 
 
-def batch_norm_relu(inputs, is_training, data_format):
+def batch_norm_relu(inputs, training, data_format):
   """Performs a batch normalization followed by a ReLU."""
   # We set fused=True for a significant performance boost. See
   # https://www.tensorflow.org/performance/performance_guide#common_fused_ops
   inputs = tf.layers.batch_normalization(
       inputs=inputs, axis=1 if data_format == 'channels_first' else 3,
       momentum=_BATCH_NORM_DECAY, epsilon=_BATCH_NORM_EPSILON, center=True,
-      scale=True, training=is_training, fused=True)
+      scale=True, training=training, fused=True)
   inputs = tf.nn.relu(inputs)
   return inputs
 
@@ -91,7 +91,7 @@ def conv2d_fixed_padding(inputs, filters, kernel_size, strides, data_format):
       data_format=data_format)
 
 
-def building_block(inputs, filters, is_training, projection_shortcut, strides,
+def building_block(inputs, filters, training, projection_shortcut, strides,
                    data_format):
   """Standard building block for residual networks with BN before convolutions.
 
@@ -99,7 +99,7 @@ def building_block(inputs, filters, is_training, projection_shortcut, strides,
     inputs: A tensor of size [batch, channels, height_in, width_in] or
       [batch, height_in, width_in, channels] depending on data_format.
     filters: The number of filters for the convolutions.
-    is_training: A Boolean for whether the model is in training or inference
+    training: A Boolean for whether the model is in training or inference
       mode. Needed for batch normalization.
     projection_shortcut: The function to use for projection shortcuts (typically
       a 1x1 convolution when downsampling the input).
@@ -111,7 +111,7 @@ def building_block(inputs, filters, is_training, projection_shortcut, strides,
     The output tensor of the block.
   """
   shortcut = inputs
-  inputs = batch_norm_relu(inputs, is_training, data_format)
+  inputs = batch_norm_relu(inputs, training, data_format)
 
   # The projection shortcut should come after the first batch norm and ReLU
   # since it performs a 1x1 convolution.
@@ -122,7 +122,7 @@ def building_block(inputs, filters, is_training, projection_shortcut, strides,
       inputs=inputs, filters=filters, kernel_size=3, strides=strides,
       data_format=data_format)
 
-  inputs = batch_norm_relu(inputs, is_training, data_format)
+  inputs = batch_norm_relu(inputs, training, data_format)
   inputs = conv2d_fixed_padding(
       inputs=inputs, filters=filters, kernel_size=3, strides=1,
       data_format=data_format)
@@ -130,7 +130,7 @@ def building_block(inputs, filters, is_training, projection_shortcut, strides,
   return inputs + shortcut
 
 
-def bottleneck_block(inputs, filters, is_training, projection_shortcut,
+def bottleneck_block(inputs, filters, training, projection_shortcut,
                      strides, data_format):
   """Bottleneck block variant for residual networks with BN before convolutions.
 
@@ -139,7 +139,7 @@ def bottleneck_block(inputs, filters, is_training, projection_shortcut,
       [batch, height_in, width_in, channels] depending on data_format.
     filters: The number of filters for the first two convolutions. Note that the
       third and final convolution will use 4 times as many filters.
-    is_training: A Boolean for whether the model is in training or inference
+    training: A Boolean for whether the model is in training or inference
       mode. Needed for batch normalization.
     projection_shortcut: The function to use for projection shortcuts (typically
       a 1x1 convolution when downsampling the input).
@@ -151,7 +151,7 @@ def bottleneck_block(inputs, filters, is_training, projection_shortcut,
     The output tensor of the block.
   """
   shortcut = inputs
-  inputs = batch_norm_relu(inputs, is_training, data_format)
+  inputs = batch_norm_relu(inputs, training, data_format)
 
   # The projection shortcut should come after the first batch norm and ReLU
   # since it performs a 1x1 convolution.
@@ -162,12 +162,12 @@ def bottleneck_block(inputs, filters, is_training, projection_shortcut,
       inputs=inputs, filters=filters, kernel_size=1, strides=1,
       data_format=data_format)
 
-  inputs = batch_norm_relu(inputs, is_training, data_format)
+  inputs = batch_norm_relu(inputs, training, data_format)
   inputs = conv2d_fixed_padding(
       inputs=inputs, filters=filters, kernel_size=3, strides=strides,
       data_format=data_format)
 
-  inputs = batch_norm_relu(inputs, is_training, data_format)
+  inputs = batch_norm_relu(inputs, training, data_format)
   inputs = conv2d_fixed_padding(
       inputs=inputs, filters=4 * filters, kernel_size=1, strides=1,
       data_format=data_format)
@@ -175,7 +175,7 @@ def bottleneck_block(inputs, filters, is_training, projection_shortcut,
   return inputs + shortcut
 
 
-def block_layer(inputs, filters, block_fn, blocks, strides, is_training, name,
+def block_layer(inputs, filters, block_fn, blocks, strides, training, name,
                 data_format):
   """Creates one layer of blocks for the ResNet model.
 
@@ -188,7 +188,7 @@ def block_layer(inputs, filters, block_fn, blocks, strides, is_training, name,
     blocks: The number of blocks contained in the layer.
     strides: The stride to use for the first convolution of the layer. If
       greater than 1, this layer will ultimately downsample the input.
-    is_training: Either True or False, whether we are currently training the
+    training: Either True or False, whether we are currently training the
       model. Needed for batch norm.
     name: A string name for the tensor output of the block layer.
     data_format: The input format ('channels_last' or 'channels_first').
@@ -205,11 +205,11 @@ def block_layer(inputs, filters, block_fn, blocks, strides, is_training, name,
         data_format=data_format)
 
   # Only the first block per block_layer uses projection_shortcut and strides
-  inputs = block_fn(inputs, filters, is_training, projection_shortcut, strides,
+  inputs = block_fn(inputs, filters, training, projection_shortcut, strides,
                     data_format)
 
   for _ in range(1, blocks):
-    inputs = block_fn(inputs, filters, is_training, None, 1, data_format)
+    inputs = block_fn(inputs, filters, training, None, 1, data_format)
 
   return tf.identity(inputs, name)
 
@@ -288,7 +288,7 @@ class Model(object):
       inputs = block_layer(
           inputs=inputs, filters=num_filters, block_fn=p['block_fn'],
           blocks=num_blocks, strides=stride_stack.pop(),
-          is_training=is_training, name='block_layer{}'.format(layer_n),
+          training=training, name='block_layer{}'.format(layer_n),
           data_format=self.data_format)
 
     inputs = batch_norm_relu(inputs, training, data_format)
