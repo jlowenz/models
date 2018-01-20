@@ -211,5 +211,13 @@ if __name__ == '__main__':
   tf.logging.set_verbosity(tf.logging.INFO)
 
   parser = resnet_shared.ResnetArgParser()
+  # Set defaults that are reasonable for this model.
+  parser.set_defaults(data_dir='/tmp/cifar10_data',
+                      model_dir='/tmp/cifar10_model',
+                      resnet_size=32,
+                      train_epochs=250,
+                      epochs_per_eval=10,
+                      batch_size=128)
+
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(argv=[sys.argv[0]] + unparsed)

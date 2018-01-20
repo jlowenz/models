@@ -103,7 +103,7 @@ def resnet_main(flags, model_function, input_function):
 
   # Set up a RunConfig to only save checkpoints once per training cycle.
   run_config = tf.estimator.RunConfig().replace(save_checkpoints_secs=1e9)
-  cifar_classifier = tf.estimator.Estimator(
+  classifier = tf.estimator.Estimator(
       model_fn=model_function, model_dir=flags.model_dir, config=run_config,
       params={
           'resnet_size': flags.resnet_size,
@@ -121,7 +121,7 @@ def resnet_main(flags, model_function, input_function):
     logging_hook = tf.train.LoggingTensorHook(
         tensors=tensors_to_log, every_n_iter=100)
 
-    cifar_classifier.train(
+    classifier.train(
         input_fn=lambda: input_function(
             True, flags.data_dir, flags.batch_size, flags.epochs_per_eval),
         hooks=[logging_hook])
