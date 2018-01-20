@@ -280,12 +280,11 @@ class Model(object):
       inputs = tf.identity(inputs, 'initial_max_pool')
 
     for i, num_blocks in enumerate(p['layers']):
-      layer_n = i + 1
-      num_filters = p['num_filters'] * layer_n
+      num_filters = p['num_filters'] * (2**i)
       inputs = block_layer(
           inputs=inputs, filters=num_filters, block_fn=p['block_fn'],
           blocks=num_blocks, strides=stride_stack.pop(),
-          training=training, name='block_layer{}'.format(layer_n),
+          training=training, name='block_layer{}'.format(i + 1),
           data_format=self.data_format)
 
     inputs = batch_norm_relu(inputs, training, self.data_format)
