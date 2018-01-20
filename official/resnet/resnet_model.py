@@ -275,7 +275,7 @@ class Model(object):
         strides=stride_stack.pop(), data_format=self.data_format)
     inputs = tf.identity(inputs, 'initial_conv')
 
-    if p.first_pool_size:
+    if p['first_pool_size']:
       inputs = tf.layers.max_pooling2d(
         inputs=inputs, pool_size=p['first_pool_size'],
         strides=stride_stack.pop(), padding='SAME',
