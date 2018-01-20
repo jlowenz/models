@@ -106,7 +106,7 @@ def preprocess_image(image, is_training):
                                                    _WIDTH + 8)
 
     # Randomly crop a [_HEIGHT, _WIDTH] section of the image.
-    image = tf.random_crop(image, [_HEIGHT, _WIDTH, _NUM_CLASSES])
+    image = tf.random_crop(image, [_HEIGHT, _WIDTH, _NUM_CHANNELS])
 
     # Randomly flip the image horizontally.
     image = tf.image.random_flip_left_right(image)
