@@ -169,7 +169,7 @@ class Cifar10Model(resnet_model.Model):
         kernel_size=3,
         first_pool_size=None,
         second_pool_size=8,
-        block_fn=building_block,
+        block_fn=resnet_model.building_block,
         layers=self._get_layers(),
         stride_sizes=self._get_stride_sizes(),
         final_size=64)

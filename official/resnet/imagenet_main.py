@@ -150,9 +150,9 @@ class ImagenetModel(Model):
 
   def _get_block_fn(self):
     if self.resnet_size < 50:
-      return building_block
+      return resnet_model.building_block
     else:
-      return bottleneck_block
+      return resnet_model.bottleneck_block
 
   def _get_layers(self):
     choices = {
