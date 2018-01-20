@@ -291,7 +291,7 @@ class Model(object):
           training=training, name='block_layer{}'.format(layer_n),
           data_format=self.data_format)
 
-    inputs = batch_norm_relu(inputs, training, data_format)
+    inputs = batch_norm_relu(inputs, training, self.data_format)
     inputs = tf.layers.average_pooling2d(
         inputs=inputs, pool_size=p['second_pool_size'],
         strides=stride_stack.pop(), padding='VALID',
