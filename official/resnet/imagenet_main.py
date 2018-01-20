@@ -186,7 +186,8 @@ def imagenet_model_fn(features, labels, mode, params):
   train_params = dict(
       batch_denom=256,
       epochs=[30, 60, 80, 90],
-      learning_rates=[1, 0.1, 0.01, 1e-3, 1e-4])
+      learning_rates=[1, 0.1, 0.01, 1e-3, 1e-4],
+      weight_decay=_WEIGHT_DECAY)
 
   params.update(train_params)
 

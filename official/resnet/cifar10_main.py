@@ -192,7 +192,8 @@ def cifar10_model_fn(features, labels, mode, params):
   train_params = dict(
       batch_denom=128,
       epochs=[100, 150, 200],
-      learning_rates=[1, 0.1, 0.01, 1e-3])
+      learning_rates=[1, 0.1, 0.01, 1e-3],
+      weight_decay=_WEIGHT_DECAY)
 
   params.update(train_params)
 
