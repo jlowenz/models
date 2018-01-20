@@ -179,7 +179,7 @@ class Cifar10Model(resnet_model.Model):
     return [num_blocks] * 3
 
   def _get_stride_sizes(self):
-    return [1, 2, 2, 2]
+    return [1, 2, 2, 2, 1]
 
 
 def cifar10_model_fn(features, labels, mode, params):
